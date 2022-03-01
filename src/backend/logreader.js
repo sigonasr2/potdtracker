@@ -1,5 +1,20 @@
 Tail = require('tail').Tail;
 const fs = require('fs');
+var http = require('http');
+const express = require('express') 
+const port = 4600
+
+const app = express()
+var server = http.createServer(options, app); 
+server.listen(port, () => console.log(`Serving POTD Data on Port ${port}`))
+
+let allowCrossDomain = function(req, res, next) {
+	res.header('Access-Control-Allow-Origin', "*");
+	res.header('Access-Control-Allow-Headers', "*");
+	res.header('Access-Control-Allow-Methods', "*");
+	next();
+}
+app.use(allowCrossDomain);
 
 var pomander = [
 		[0,0,0],
@@ -110,6 +125,21 @@ function GetPomanderSlot(str) {
 	}
 	console.log("Could not find Pomander slot for pomander '"+str+"'! This should not be happening!")
 	return -1
+}
+
+function CreateMasterObj() {
+	return {
+		pomander:pomander,
+		accursed_hoard:accursed_hoard,
+		mimics:mimics,
+		traps:traps,
+		floor_effects:floor_effects,
+		death_count:death_count,
+		floor:floor,
+		accursed_hoard_detected:accursed_hoard_detected,
+		previous_pomander:previous_pomander,
+		floor_storage:floor_storage,
+	}
 }
 
 function ParseString(str) {
@@ -311,18 +341,7 @@ function ParseString(str) {
 		
 		if (update_file) {
 			update_file=false
-			var master_obj = {
-				pomander:pomander,
-				accursed_hoard:accursed_hoard,
-				mimics:mimics,
-				traps:traps,
-				floor_effects:floor_effects,
-				death_count:death_count,
-				floor:floor,
-				accursed_hoard_detected:accursed_hoard_detected,
-				previous_pomander:previous_pomander,
-				floor_storage:floor_storage,
-			}
+			var master_obj = CreateMasterObj()
 			fs.writeFileSync('./data.json', JSON.stringify(master_obj, null, 2) , 'utf-8');
 		}
 	}
@@ -335,3 +354,10 @@ tail.on("line", function(data) {
 tail.on("error", function(error) {
   console.log('ERROR: ', error);
 });
+
+
+
+app.get('/',async(req,res)=>{
+	var master_obj = CreateMasterObj()
+	res.status(200).json(master_obj)
+})
