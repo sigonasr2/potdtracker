@@ -96,6 +96,7 @@ var options = {
 
 var previous_pomander=""
 var floor_storage={}
+var floor_buff_storage={}
 var update_file=false;
 
 tail = new Tail(process.argv[2], options);
@@ -114,6 +115,7 @@ if (fs.existsSync('./data.json')) {
 	accursed_hoard_detected=master_obj.accursed_hoard_detected
 	previous_pomander=master_obj.previous_pomander
 	floor_storage=master_obj.floor_storage
+	floor_buff_storage=master_obj.floor_buff_storage
 }
 
 
@@ -139,6 +141,7 @@ function CreateMasterObj() {
 		accursed_hoard_detected:accursed_hoard_detected,
 		previous_pomander:previous_pomander,
 		floor_storage:floor_storage,
+		floor_buff_storage:floor_buff_storage,
 	}
 }
 
@@ -179,6 +182,7 @@ function ParseString(str) {
 			floor=Number(fl)
 			previous_pomander=""
 			floor_storage={}
+			floor_buff_storage={}
 			accursed_hoard_detected=false
 			update_file=true
 		} else
@@ -188,6 +192,7 @@ function ParseString(str) {
 			floor=Number(fl)
 			previous_pomander=""
 			floor_storage={}
+			floor_buff_storage={}
 			accursed_hoard_detected=false
 			update_file=true
 		} else
@@ -197,6 +202,7 @@ function ParseString(str) {
 			floor=0
 			previous_pomander=""
 			floor_storage={}
+			floor_buff_storage={}
 			accursed_hoard_detected=false
 			for (var i=0;i<pomander.length;i++) {
 				pomander[i][0]=0
@@ -286,56 +292,67 @@ function ParseString(str) {
 		if (split[4].includes("An ancient enchantment stimulates your humours, increasing the speed with which you act.")) {
 			floor_effects[0][0]++
 			floor_effects[0][1]++
+			floor_buff_storage={0:true}
 			update_file=true
 		} else
 		if (split[4].includes("An ancient enchantment revitalizes your body and mind.")) {
 			floor_effects[1][0]++
 			floor_effects[1][1]++
+			floor_buff_storage={1:true}
 			update_file=true
 		} else
 		if (split[4].includes("The gathering gloom appears to invigorate the floor's denizens.")) {
 			floor_effects[2][0]++
 			floor_effects[2][1]++
+			floor_buff_storage={2:true}
 			update_file=true
 		} else
 		if (split[4].includes("An ancient enchantment clouds your eyes, making it difficult to discern your quarry.")) {
 			floor_effects[3][0]++
 			floor_effects[3][1]++
+			floor_buff_storage={3:true}
 			update_file=true
 		} else
 		if (split[4].includes("The items in your bag have temporarily transformed into worthless stone.")) {
 			floor_effects[4][0]++
 			floor_effects[4][1]++
+			floor_buff_storage={4:true}
 			update_file=true
 		} else
 		if (split[4].includes("An ancient enchantment clouds your mind, making it impossible to remember previously learned abilities.")) {
 			floor_effects[5][0]++
 			floor_effects[5][1]++
+			floor_buff_storage={5:true}
 			update_file=true
 		} else
 		if (split[4].includes("An ancient enchantment saps your health.")) {
 			floor_effects[6][0]++
 			floor_effects[6][1]++
+			floor_buff_storage={6:true}
 			update_file=true
 		} else
 		if (split[4].includes("An ancient enchantment saps your very strength, weakening your blows.")) {
 			floor_effects[7][0]++
 			floor_effects[7][1]++
+			floor_buff_storage={7:true}
 			update_file=true
 		} else
 		if (split[4].includes("Your body is fatigued and wounds refuse to heal on their own.")) {
 			floor_effects[8][0]++
 			floor_effects[8][1]++
+			floor_buff_storage={8:true}
 			update_file=true
 		} else
 		if (split[4].includes("Your entire body feels heavy.")) {
 			floor_effects[9][0]++
 			floor_effects[9][1]++
+			floor_buff_storage={9:true}
 			update_file=true
 		} else
 		if (split[4].includes("You find yourself short of breath, unable to sprint.")) {
 			floor_effects[10][0]++
 			floor_effects[10][1]++
+			floor_buff_storage={10:true}
 			update_file=true
 		}
 		

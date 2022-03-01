@@ -127,6 +127,21 @@ function GetPomanderSlot(str) {
 	return -1
 }
 
+function CreateMasterObj() {
+	return {
+		pomander:pomander,
+		accursed_hoard:accursed_hoard,
+		mimics:mimics,
+		traps:traps,
+		floor_effects:floor_effects,
+		death_count:death_count,
+		floor:floor,
+		accursed_hoard_detected:accursed_hoard_detected,
+		previous_pomander:previous_pomander,
+		floor_storage:floor_storage,
+	}
+}
+
 function ParseString(str) {
 	var split = str.split("|")
 	if (split.length===6) {
@@ -326,18 +341,7 @@ function ParseString(str) {
 		
 		if (update_file) {
 			update_file=false
-			var master_obj = {
-				pomander:pomander,
-				accursed_hoard:accursed_hoard,
-				mimics:mimics,
-				traps:traps,
-				floor_effects:floor_effects,
-				death_count:death_count,
-				floor:floor,
-				accursed_hoard_detected:accursed_hoard_detected,
-				previous_pomander:previous_pomander,
-				floor_storage:floor_storage,
-			}
+			var master_obj = CreateMasterObj()
 			fs.writeFileSync('./data.json', JSON.stringify(master_obj, null, 2) , 'utf-8');
 		}
 	}
@@ -354,5 +358,6 @@ tail.on("error", function(error) {
 
 
 app.get('/',async(req,res)=>{
-	res.status(200).send('Hello World')
+	var master_obj = CreateMasterObj()
+	res.status(200).json(master_obj)
 })
