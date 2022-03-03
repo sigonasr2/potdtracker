@@ -35,23 +35,25 @@ function App() {
 
 	function NameMatches(i) {
 		for (var key of Object.keys(data.floor_storage)) {
-			if (key==="safety"&&i===0||
-			key==="sight"&&i===1||
-			key==="strength"&&i===2||
-			key==="steel"&&i===3||
-			key==="affluence"&&i===4||
-			key==="flight"&&i===5||
-			key==="alteration"&&i===6||
-			key==="purity"&&i===7||
-			key==="fortune"&&i===8||
-			key==="witching"&&i===9||
-			key==="serenity"&&i===10||
-			key==="rage"&&i===11||
-			key==="lust"&&i===12||
-			key==="intuition"&&i===13||
-			key==="raising"&&i===14||
-			key==="resolution"&&i===15) {
-				return true
+			if ((key==="safety"&&i===0)||
+			(key==="sight"&&i===1)||
+			(key==="strength"&&i===2)||
+			(key==="steel"&&i===3)||
+			(key==="affluence"&&i===4)||
+			(key==="flight"&&i===5)||
+			(key==="alteration"&&i===6)||
+			(key==="purity"&&i===7)||
+			(key==="fortune"&&i===8)||
+			(key==="witching"&&i===9)||
+			(key==="serenity"&&i===10)||
+			(key==="rage"&&i===11)||
+			(key==="lust"&&i===12)||
+			(key==="intuition"&&i===13)||
+			(key==="raising"&&i===14)||
+			(key==="resolution"&&i===15)) {
+				if (data.floor_storage[key]>0) {
+					return true
+				}
 			}
 		}
 		return false
@@ -115,6 +117,7 @@ function App() {
 				{data.death_count[0]}</div>
 				{
 					data.floor_effects.map((eff,i)=>{
+						console.log(data.floor_buff_storage)
 						return <>
 						{i in data.floor_buff_storage&&<div className={"floating "+((i<=1)?"smoldotgreen":"smoldot")} style={{left:48+Math.floor(i/3)*96,top:528+(i%3)*48+((i<=1)?-4:0),fontSize:16}}/>}
 						<div className="floating current" style={{left:96+Math.floor(i/3)*96,top:534+(i%3)*48,fontSize:16}}>

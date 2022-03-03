@@ -160,6 +160,13 @@ function ParseString(str) {
 			pomander[pomander_slot][0]-=1
 			update_file=true
 		} else
+		if (split[4].includes("uses a pomander of ")) {
+			var pomander_name=split[4].substring(split[4].indexOf("uses a pomander of ")+"uses a pomander of ".length)
+			pomander_name=pomander_name.substring(0,pomander_name.length-1)
+			var pomander_slot = GetPomanderSlot(pomander_name)
+			pomander[pomander_slot][0]-=1
+			update_file=true
+		} else
 		if (split[4].includes("You cannot carry any more of that item.")) {
 			var pomander_name=split[4].substring("You return the pomander of ".length)
 			pomander_name=pomander_name.replace(" to the coffer. You cannot carry any more of that item.","")
@@ -206,6 +213,7 @@ function ParseString(str) {
 			accursed_hoard_detected=false
 			for (var i=0;i<pomander.length;i++) {
 				pomander[i][0]=0
+				pomander[i][1]=0
 			}
 			for (var i=0;i<accursed_hoard.length;i++) {
 				accursed_hoard[i][0]=0
@@ -252,8 +260,9 @@ function ParseString(str) {
 			pomander_name=pomander_name.substring(0,pomander_name.length-1)
 			var pomander_slot = GetPomanderSlot(pomander_name)
 			pomander[pomander_slot][0]++
-			if (floor_storage.hasOwnProperty(pomander_name)&&floor_storage[pomander_name]>0) {
+			if (pomander_name in floor_storage&&floor_storage[pomander_name]>0) {
 				floor_storage[pomander_name]--
+				previous_pomander=""
 			} else {
 				pomander[pomander_slot][1]++
 				pomander[pomander_slot][2]++
@@ -292,67 +301,67 @@ function ParseString(str) {
 		if (split[4].includes("An ancient enchantment stimulates your humours, increasing the speed with which you act.")) {
 			floor_effects[0][0]++
 			floor_effects[0][1]++
-			floor_buff_storage={0:true}
+			floor_buff_storage={...floor_buff_storage,0:true}
 			update_file=true
 		} else
 		if (split[4].includes("An ancient enchantment revitalizes your body and mind.")) {
 			floor_effects[1][0]++
 			floor_effects[1][1]++
-			floor_buff_storage={1:true}
+			floor_buff_storage={...floor_buff_storage,1:true}
 			update_file=true
 		} else
 		if (split[4].includes("The gathering gloom appears to invigorate the floor's denizens.")) {
 			floor_effects[2][0]++
 			floor_effects[2][1]++
-			floor_buff_storage={2:true}
+			floor_buff_storage={...floor_buff_storage,2:true}
 			update_file=true
 		} else
 		if (split[4].includes("An ancient enchantment clouds your eyes, making it difficult to discern your quarry.")) {
 			floor_effects[3][0]++
 			floor_effects[3][1]++
-			floor_buff_storage={3:true}
+			floor_buff_storage={...floor_buff_storage,3:true}
 			update_file=true
 		} else
 		if (split[4].includes("The items in your bag have temporarily transformed into worthless stone.")) {
 			floor_effects[4][0]++
 			floor_effects[4][1]++
-			floor_buff_storage={4:true}
+			floor_buff_storage={...floor_buff_storage,4:true}
 			update_file=true
 		} else
 		if (split[4].includes("An ancient enchantment clouds your mind, making it impossible to remember previously learned abilities.")) {
 			floor_effects[5][0]++
 			floor_effects[5][1]++
-			floor_buff_storage={5:true}
+			floor_buff_storage={...floor_buff_storage,5:true}
 			update_file=true
 		} else
 		if (split[4].includes("An ancient enchantment saps your health.")) {
 			floor_effects[6][0]++
 			floor_effects[6][1]++
-			floor_buff_storage={6:true}
+			floor_buff_storage={...floor_buff_storage,6:true}
 			update_file=true
 		} else
 		if (split[4].includes("An ancient enchantment saps your very strength, weakening your blows.")) {
 			floor_effects[7][0]++
 			floor_effects[7][1]++
-			floor_buff_storage={7:true}
+			floor_buff_storage={...floor_buff_storage,7:true}
 			update_file=true
 		} else
 		if (split[4].includes("Your body is fatigued and wounds refuse to heal on their own.")) {
 			floor_effects[8][0]++
 			floor_effects[8][1]++
-			floor_buff_storage={8:true}
+			floor_buff_storage={...floor_buff_storage,8:true}
 			update_file=true
 		} else
 		if (split[4].includes("Your entire body feels heavy.")) {
 			floor_effects[9][0]++
 			floor_effects[9][1]++
-			floor_buff_storage={9:true}
+			floor_buff_storage={...floor_buff_storage,9:true}
 			update_file=true
 		} else
 		if (split[4].includes("You find yourself short of breath, unable to sprint.")) {
 			floor_effects[10][0]++
 			floor_effects[10][1]++
-			floor_buff_storage={10:true}
+			floor_buff_storage={...floor_buff_storage,10:true}
 			update_file=true
 		}
 		

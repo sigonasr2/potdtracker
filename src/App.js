@@ -51,7 +51,9 @@ function App() {
 			(key==="intuition"&&i===13)||
 			(key==="raising"&&i===14)||
 			(key==="resolution"&&i===15)) {
-				return true
+				if (data.floor_storage[key]>0) {
+					return true
+				}
 			}
 		}
 		return false
