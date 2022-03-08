@@ -12,6 +12,16 @@
     width:56px;
     height:56px;
 }
+
+.dotused {
+    background-color:rgba(0,0,0,0.0);
+    border:4px solid rgba(255,255,150,0.9);    
+    border-radius:50%;
+    -moz-border-radius:50%;
+    -webkit-border-radius:50%;
+    width:56px;
+    height:56px;
+}
 .smoldotgreen {
     background-color:rgba(0,0,0,0.0);
     border:4px solid rgba(150,255,150,0.8);    

@@ -158,6 +158,9 @@ function ParseString(str) {
 			pomander_name=pomander_name.substring(0,pomander_name.length-1)
 			var pomander_slot = GetPomanderSlot(pomander_name)
 			pomander[pomander_slot][0]-=1
+			if (!floor_storage.hasOwnProperty(pomander_name)) {
+				floor_storage[pomander_name]=0
+			}
 			update_file=true
 		} else
 		if (split[4].includes("uses a pomander of ")) {
