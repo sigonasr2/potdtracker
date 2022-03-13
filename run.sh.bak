@@ -1,3 +1,5 @@
 npm start &
 cd src/backend
-node logreader.js $1
+for fname in "$@"; do
+  node logreader.js $fname
+done
