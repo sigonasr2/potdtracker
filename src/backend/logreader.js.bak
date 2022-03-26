@@ -64,6 +64,12 @@ var floor_effects=[
 var death_count=[0,0];
 var floor=0;
 var accursed_hoard_detected=false
+var kills=0;
+var currentLevel=1;
+var startLevel=1;
+var points=0;
+var fully_explored=true;
+var time_bonus=true;
 
 const POMANDER_NAMES = [
 	"safety",
@@ -116,6 +122,15 @@ if (fs.existsSync('./data.json')) {
 	previous_pomander=master_obj.previous_pomander
 	floor_storage=master_obj.floor_storage
 	floor_buff_storage=master_obj.floor_buff_storage
+	kills=master_obj.kills??0
+	rare_kills=master_obj.rare_kills??0
+	mandragora=master_obj.mandragora??0
+	mimic=master_obj.mimic??0
+	currentLevel=master_obj.currentLevel??1
+	startLevel=master_obj.startLevel??1
+	points=master_obj.points??0
+	fully_explored=master_obj.fully_explored??true
+	time_bonus=master_obj.time_bonus??true
 }
 
 
@@ -142,6 +157,15 @@ function CreateMasterObj() {
 		previous_pomander:previous_pomander,
 		floor_storage:floor_storage,
 		floor_buff_storage:floor_buff_storage,
+		kills:kills,
+		rare_kills:rare_kills,
+		mimic:mimic,
+		mandragora:mandragora,
+		currentLevel:currentLevel,
+		startLevel:startLevel,
+		points:Math.max(points,0),
+		fully_explored:fully_explored,
+		time_bonus:time_bonus,
 	}
 }
 
@@ -151,6 +175,7 @@ function ParseString(str) {
 		//console.log(split[4])
 		if (split[4].includes("The coffer...bares its fangs!")) {
 			mimics[1]++
+			points-=101
 			update_file=true
 		} else
 		if (split[4].includes("You use a pomander of ")) {
@@ -158,11 +183,18 @@ function ParseString(str) {
 			pomander_name=pomander_name.substring(0,pomander_name.length-1)
 			var pomander_slot = GetPomanderSlot(pomander_name)
 			pomander[pomander_slot][0]-=1
+			if (!floor_storage.hasOwnProperty(pomander_name)) {
+				floor_storage[pomander_name]=0
+			}
 			update_file=true
 		} else
 		if (split[4].includes("uses a pomander of ")) {
 			var pomander_name=split[4].substring(split[4].indexOf("uses a pomander of ")+"uses a pomander of ".length)
 			pomander_name=pomander_name.substring(0,pomander_name.length-1)
+			if (pomander_name==="serenity") {
+				var effect_count=Object.keys(floor_buff_storage).length
+				points-=505*effect_count
+			}
 			var pomander_slot = GetPomanderSlot(pomander_name)
 			pomander[pomander_slot][0]-=1
 			update_file=true
@@ -187,20 +219,39 @@ function ParseString(str) {
 		if (split[4].includes("Floor ")) {
 			var fl=split[4].substring("Floor ".length)
 			floor=Number(fl)
+			points+=4550
+			if (fully_explored) {
+				points+=2525
+			}
 			previous_pomander=""
 			floor_storage={}
 			floor_buff_storage={}
 			accursed_hoard_detected=false
+			fully_explored=true;
 			update_file=true
 		} else
 		if (split[4].includes("0) has begun.")) {
 			var fl=split[4].substring("The Palace of the Dead (Floors ".length)
 			fl=fl.substring(0,fl.indexOf("-"))
 			floor=Number(fl)
+			if (floor===1) {
+				points=2480;
+			} else {
+				if (time_bonus) {
+					points+=15150
+				}
+				if (floor===51||floor===101) {
+					points+=750
+				} else {
+					points+=300*101
+				}
+			}
 			previous_pomander=""
 			floor_storage={}
 			floor_buff_storage={}
+			fully_explored=true;
 			accursed_hoard_detected=false
+			time_bonus=true
 			update_file=true
 		} else
 		if (split[4].includes("0) has ended.")) {
@@ -228,31 +279,42 @@ function ParseString(str) {
 				floor_effects[i][0]=0
 			}
 			death_count[1]++
+			kills=0;
+			rare_kills=0;
+			currentLevel=startLevel=1;
+			points=0;
+			fully_explored=true;
+			time_bonus=true;
 			update_file=true
 		} else
 		if (split[4].includes("The enfeebling trap is triggered...")) {
 			traps[ENFEEBLING][0]++
 			traps[ENFEEBLING][1]++
+			points-=202
 			update_file=true
 		} else
 		if (split[4].includes("The toading trap is triggered...")) {
 			traps[TOADING][0]++
 			traps[TOADING][1]++
+			points-=202
 			update_file=true
 		} else
 		if (split[4].includes("The impeding trap is triggered...")) {
 			traps[IMPEDING][0]++
 			traps[IMPEDING][1]++
+			points-=202
 			update_file=true
 		} else
 		if (split[4].includes("The luring trap is triggered...")) {
 			traps[LURING][0]++
 			traps[LURING][1]++
+			points-=202
 			update_file=true
 		} else
 		if (split[4].includes("The landmine is triggered...")) {
 			traps[LANDMINE][0]++
 			traps[LANDMINE][1]++
+			points-=202
 			update_file=true
 		} else
 		if (split[4].includes("obtains a pomander of ")) {
@@ -291,85 +353,147 @@ function ParseString(str) {
 				accursed_hoard[3][0]++
 				accursed_hoard[3][1]++
 			}
+			points-=101
 			update_file=true
 		} else
 		if (split[4].includes("You are revived!")) {
 			death_count[0]++
 			death_count[1]++
+			points-=5050
 			update_file=true
 		} else
 		if (split[4].includes("An ancient enchantment stimulates your humours, increasing the speed with which you act.")) {
 			floor_effects[0][0]++
 			floor_effects[0][1]++
 			floor_buff_storage={...floor_buff_storage,0:true}
+			points+=505
 			update_file=true
 		} else
 		if (split[4].includes("An ancient enchantment revitalizes your body and mind.")) {
 			floor_effects[1][0]++
 			floor_effects[1][1]++
 			floor_buff_storage={...floor_buff_storage,1:true}
+			points+=505
 			update_file=true
 		} else
 		if (split[4].includes("The gathering gloom appears to invigorate the floor's denizens.")) {
 			floor_effects[2][0]++
 			floor_effects[2][1]++
 			floor_buff_storage={...floor_buff_storage,2:true}
+			points+=505
 			update_file=true
 		} else
 		if (split[4].includes("An ancient enchantment clouds your eyes, making it difficult to discern your quarry.")) {
 			floor_effects[3][0]++
 			floor_effects[3][1]++
 			floor_buff_storage={...floor_buff_storage,3:true}
+			points+=505
 			update_file=true
 		} else
 		if (split[4].includes("The items in your bag have temporarily transformed into worthless stone.")) {
 			floor_effects[4][0]++
 			floor_effects[4][1]++
 			floor_buff_storage={...floor_buff_storage,4:true}
+			points+=505
 			update_file=true
 		} else
 		if (split[4].includes("An ancient enchantment clouds your mind, making it impossible to remember previously learned abilities.")) {
 			floor_effects[5][0]++
 			floor_effects[5][1]++
 			floor_buff_storage={...floor_buff_storage,5:true}
+			points+=505
 			update_file=true
 		} else
 		if (split[4].includes("An ancient enchantment saps your health.")) {
 			floor_effects[6][0]++
 			floor_effects[6][1]++
 			floor_buff_storage={...floor_buff_storage,6:true}
+			points+=505
 			update_file=true
 		} else
 		if (split[4].includes("An ancient enchantment saps your very strength, weakening your blows.")) {
 			floor_effects[7][0]++
 			floor_effects[7][1]++
 			floor_buff_storage={...floor_buff_storage,7:true}
+			points+=505
 			update_file=true
 		} else
 		if (split[4].includes("Your body is fatigued and wounds refuse to heal on their own.")) {
 			floor_effects[8][0]++
 			floor_effects[8][1]++
 			floor_buff_storage={...floor_buff_storage,8:true}
+			points+=505
 			update_file=true
 		} else
 		if (split[4].includes("Your entire body feels heavy.")) {
 			floor_effects[9][0]++
 			floor_effects[9][1]++
 			floor_buff_storage={...floor_buff_storage,9:true}
+			points+=505
 			update_file=true
 		} else
 		if (split[4].includes("You find yourself short of breath, unable to sprint.")) {
 			floor_effects[10][0]++
 			floor_effects[10][1]++
 			floor_buff_storage={...floor_buff_storage,10:true}
+			points+=505
 			update_file=true
+		} else
+		if (split[4].includes(" attains level ")) {
+			var name = split[4].substring(0,split[4].indexOf(" attains level "))
+			if (name==="Soria L."||name==="Niconico N.") {
+				var cutoff = split[4].indexOf(" attains level ")+" attains level ".length
+				var level = Number(split[4].substring(cutoff,split[4].indexOf("!")))//floor_buff_storage={...floor_buff_storage,10:true}
+				currentLevel=level;
+				points+=500
+				update_file=true
+			}
+		} else
+		if (split[4].includes("This floor is being marked as incomplete.")) {
+			fully_explored=false
+		} else
+		if (split[4].includes("30 minutes remaining")) {
+			time_bonus=false;
 		}
-		
-		if (update_file) {
-			update_file=false
-			var master_obj = CreateMasterObj()
-			fs.writeFileSync('./data.json', JSON.stringify(master_obj, null, 2) , 'utf-8');
+	} else 
+	if (split.length==9 && split[0]==="33"&&split[3]==="10000007"&&split[6]==="FF") {
+		points+=101
+		//console.log("Treasure coffer: "+points)
+	} else
+	if (split.length==22) {
+		if (split[0]==="04") {
+			const RareMonsterNames=[
+				"bloated conjurer", "bloated archer", "bloated pugilist", "sword-swinging adventurer", "staff-spinning adventurer", "spear-shaking adventurer", 
+				"roughspun ruffian", "frenzied freebooter", "ishgardian pikeman", "duskwight lancer", "mortifying magnate", "insentient inquisitor", "moldering merchant",
+				"emaciated engineer", "jaundiced tribunus", "flyblown praefectus", "half-cracked captain", "sunken captain", "putrid plutocrat", "gangrenous gigant",
+				"corrupted centurion", "necrose knight", "blackening marketeer", "immortal flame"
+			]
+			//A kill is recorded.
+			/*04|2022-03-26T08:59:44.8220000-05:00|4000C5B3|Palace Ziz|00|3|0000|00||4983|5775|0|125|0|10000|||201.28|-298.63|0.25|-1.78|9b83e6b7aea20b6b*/
+			var name = split[3]
+			if (RareMonsterNames.includes(name.toLowerCase())) {
+				rare_kills++
+				points+=2020
+			} else 
+			if (name.toLowerCase()==="mimic"){
+				mimic++;
+				points+=505
+			} 
+			if (name.toLowerCase()==="korrigan"||
+				name.toLowerCase()==="mandragora"||
+				name.toLowerCase()==="pygmaioi"){
+				mandragora++;
+				points+=505
+			} else {
+				kills++;
+			}
+			update_file=true;
 		}
+	}
+	if (update_file) {
+		update_file=false
+		var master_obj = CreateMasterObj()
+		fs.writeFileSync('./data.json', JSON.stringify(master_obj, null, 2) , 'utf-8');
 	}
 }
 
