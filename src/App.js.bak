@@ -65,13 +65,15 @@ function App() {
 		<img src="./layout.png"/>
 		
 		{data&&<>
+			<div className="floating" style={{left:190-CenterAlignAdjust(data.points,42),top:40,fontSize:42,color:"rgb(219,209,200)"}}>
+				{data.points}</div>
 			<div className="floating" style={{left:403,top:40,fontSize:42,color:"rgb(219,209,200)"}}>
 				{FormatFloor(data.floor)}</div>
 				
 				{
 					data.pomander.map((pom,i)=>{
 						return <>
-						{NameMatches(i)==2?<div className="floating dot" style={{left:50+(i%6)*64,top:88+Math.floor(i/6)*64,fontSize:24}}/>:NameMatches(i)==1&&<div className="floating dotused" style={{left:50+(i%6)*64,top:88+Math.floor(i/6)*64,fontSize:24}}/>}
+						{NameMatches(i)==1?<div className="floating dot" style={{left:50+(i%6)*64,top:88+Math.floor(i/6)*64,fontSize:24}}/>:NameMatches(i)==2&&<div className="floating dotused" style={{left:50+(i%6)*64,top:88+Math.floor(i/6)*64,fontSize:24}}/>}
 						<div className="floating current" style={{left:48+(i%6)*64,top:80+Math.floor(i/6)*64,fontSize:24}}>
 						{pom[1]}</div>
 						<div className="floating alltime" style={{left:48+(i%6)*64,top:104+Math.floor(i/6)*64,fontSize:24}}>

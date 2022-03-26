@@ -70,6 +70,7 @@ var startLevel=1;
 var points=0;
 var fully_explored=true;
 var time_bonus=true;
+var started=false;
 
 const POMANDER_NAMES = [
 	"safety",
@@ -131,6 +132,7 @@ if (fs.existsSync('./data.json')) {
 	points=master_obj.points??0
 	fully_explored=master_obj.fully_explored??true
 	time_bonus=master_obj.time_bonus??true
+	started=master_obj.started??false
 }
 
 
@@ -166,6 +168,7 @@ function CreateMasterObj() {
 		points:Math.max(points,0),
 		fully_explored:fully_explored,
 		time_bonus:time_bonus,
+		started:started,
 	}
 }
 
@@ -241,9 +244,9 @@ function ParseString(str) {
 					points+=15150
 				}
 				if (floor===51||floor===101) {
-					points+=750
+					points+=75750
 				} else {
-					points+=300*101
+					points+=30300
 				}
 			}
 			previous_pomander=""
@@ -252,6 +255,7 @@ function ParseString(str) {
 			fully_explored=true;
 			accursed_hoard_detected=false
 			time_bonus=true
+			started=true
 			update_file=true
 		} else
 		if (split[4].includes("0) has ended.")) {
@@ -285,6 +289,7 @@ function ParseString(str) {
 			points=0;
 			fully_explored=true;
 			time_bonus=true;
+			started=false
 			update_file=true
 		} else
 		if (split[4].includes("The enfeebling trap is triggered...")) {
@@ -454,13 +459,16 @@ function ParseString(str) {
 		} else
 		if (split[4].includes("30 minutes remaining")) {
 			time_bonus=false;
+		} else
+		if (split[4].includes("You obtain ")&&split[4].includes(" gil.")) {
+			started=false;
 		}
 	} else 
-	if (split.length==9 && split[0]==="33"&&split[3]==="10000007"&&split[6]==="FF") {
+	if (split.length==9 && split[0]==="33"&&split[3]==="10000007"&&split[6]==="FF"&&started) {
 		points+=101
 		//console.log("Treasure coffer: "+points)
 	} else
-	if (split.length==22) {
+	if (split.length==22&&started) {
 		if (split[0]==="04") {
 			const RareMonsterNames=[
 				"bloated conjurer", "bloated archer", "bloated pugilist", "sword-swinging adventurer", "staff-spinning adventurer", "spear-shaking adventurer", 

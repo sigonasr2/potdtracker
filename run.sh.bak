@@ -1,5 +1,6 @@
 npm start &
 cd src/backend
-for fname in "$@"; do
-  node logreader.js $fname
+read -e -p "Provide Log file: " log
+for fname in "$log"; do
+  node logreader.js "$fname"
 done

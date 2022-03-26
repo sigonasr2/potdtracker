@@ -65,6 +65,8 @@ function App() {
 		<img src="./layout.png"/>
 		
 		{data&&<>
+			<div className="floating score" style={{left:190-CenterAlignAdjust(data.points,42),top:40,fontSize:42,color:"rgb(219,209,200)"}}>
+				{data.points}</div>
 			<div className="floating" style={{left:403,top:40,fontSize:42,color:"rgb(219,209,200)"}}>
 				{FormatFloor(data.floor)}</div>
 				

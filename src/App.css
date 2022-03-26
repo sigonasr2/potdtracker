@@ -40,6 +40,10 @@
     width:48px;
     height:52px;
 }
+.score{
+	color:#fff !important;
+  text-shadow:  0 0 4px #c971a4,0 0 8px #c971a4,0 0 12px #c971a4, 0 0 16px #fff,0 0 20px #c971a4;
+}
 
 .right{
   margin: auto;
