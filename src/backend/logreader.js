@@ -456,12 +456,19 @@ function ParseString(str) {
 		} else
 		if (split[4].includes("This floor is being marked as incomplete.")) {
 			fully_explored=false
+			update_file=true;
 		} else
 		if (split[4].includes("30 minutes remaining")) {
 			time_bonus=false;
+			update_file=true;
 		} else
 		if (split[4].includes("You obtain ")&&split[4].includes(" gil.")) {
 			started=false;
+			update_file=true;
+		} else
+		if (split[4].includes("The detonator is triggered! The treasure coffer is no more...")) {
+			points-=101
+			update_file=true;
 		}
 	} else 
 	if (split.length==9 && split[0]==="33"&&split[3]==="10000007"&&split[6]==="FF"&&started) {
@@ -470,6 +477,7 @@ function ParseString(str) {
 	} else
 	if (split.length==22&&started) {
 		if (split[0]==="04") {
+			const blacklist=["trap","ruby carbuncle","topaz carbuncle","emerald carbuncle"]
 			const RareMonsterNames=[
 				"bloated conjurer", "bloated archer", "bloated pugilist", "sword-swinging adventurer", "staff-spinning adventurer", "spear-shaking adventurer", 
 				"roughspun ruffian", "frenzied freebooter", "ishgardian pikeman", "duskwight lancer", "mortifying magnate", "insentient inquisitor", "moldering merchant",
@@ -479,24 +487,28 @@ function ParseString(str) {
 			//A kill is recorded.
 			/*04|2022-03-26T08:59:44.8220000-05:00|4000C5B3|Palace Ziz|00|3|0000|00||4983|5775|0|125|0|10000|||201.28|-298.63|0.25|-1.78|9b83e6b7aea20b6b*/
 			var name = split[3]
-			if (RareMonsterNames.includes(name.toLowerCase())) {
-				rare_kills++
-				points+=2020
-			} else 
-			if (name.toLowerCase()==="mimic"){
-				mimic++;
-				points+=505
-			} 
-			if (name.toLowerCase()==="korrigan"||
-				name.toLowerCase()==="mandragora"||
-				name.toLowerCase()==="pygmaioi"){
-				mandragora++;
-				points+=505
-			} else {
-				points+=100+Math.floor(floor/2)+(floor>=101?101:0)
-				kills++;
+			if (!blacklist.includes(name.toLowerCase())&&split[11]==="0") {
+				if (RareMonsterNames.includes(name.toLowerCase())) {
+					rare_kills++
+					points+=2020
+				} else 
+				if (name.toLowerCase()==="mimic"){
+					mimic++;
+					points+=505
+				} 
+				if (name.toLowerCase()==="korrigan"||
+					name.toLowerCase()==="mandragora"||
+					name.toLowerCase()==="pygmaioi"){
+					mandragora++;
+					points+=505
+				} else {
+					points+=100+Math.floor(floor/2)+(floor>=101?101:0)
+					kills++;
+				}
+				console.log("Death for "+name+".  ("+split[11]+"/"+split[12]+" HP)")
+				update_file=true;
+				
 			}
-			update_file=true;
 		}
 	}
 	if (update_file) {
