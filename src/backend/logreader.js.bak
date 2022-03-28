@@ -477,7 +477,7 @@ function ParseString(str) {
 	} else
 	if (split.length==22&&started) {
 		if (split[0]==="04") {
-			const blacklist=["trap","ruby carbuncle","topaz carbuncle","emerald carbuncle"]
+			const blacklist=["trap","ruby carbuncle","topaz carbuncle","emerald carbuncle","lava bomb","giddy bomb","grey bomb"]
 			const RareMonsterNames=[
 				"bloated conjurer", "bloated archer", "bloated pugilist", "sword-swinging adventurer", "staff-spinning adventurer", "spear-shaking adventurer", 
 				"roughspun ruffian", "frenzied freebooter", "ishgardian pikeman", "duskwight lancer", "mortifying magnate", "insentient inquisitor", "moldering merchant",

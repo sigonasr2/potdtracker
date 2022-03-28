@@ -223,6 +223,7 @@ function ParseString(str) {
 			var fl=split[4].substring("Floor ".length)
 			floor=Number(fl)
 			points+=4550
+			points+=430
 			if (fully_explored) {
 				points+=2525
 			}
