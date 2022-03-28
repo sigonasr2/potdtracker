@@ -456,15 +456,19 @@ function ParseString(str) {
 		} else
 		if (split[4].includes("This floor is being marked as incomplete.")) {
 			fully_explored=false
+			update_file=true;
 		} else
 		if (split[4].includes("30 minutes remaining")) {
 			time_bonus=false;
+			update_file=true;
 		} else
 		if (split[4].includes("You obtain ")&&split[4].includes(" gil.")) {
 			started=false;
+			update_file=true;
 		} else
 		if (split[4].includes("The detonator is triggered! The treasure coffer is no more...")) {
 			points-=101
+			update_file=true;
 		}
 	} else 
 	if (split.length==9 && split[0]==="33"&&split[3]==="10000007"&&split[6]==="FF"&&started) {
